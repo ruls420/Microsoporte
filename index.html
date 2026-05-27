@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoporte — Dashboard Financiero</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#111827;--ink-soft:#374151;--ink-faint:#6B7280;
+  --bg:#F9FAFB;--card:#FFFFFF;--border:#E5E7EB;--border-soft:#F3F4F6;
+  --raul:#166534;--raul-l:#D1FAE5;--raul-m:#4ADE80;
+  --nydia:#92400E;--nydia-l:#FEF3C7;--nydia-m:#FCD34D;
+  --red:#B91C1C;--red-l:#FEE2E2;--amber:#B45309;--amber-l:#FEF3C7;
+  --teal:#0F766E;--teal-l:#CCFBF1;--green:#166534;--green-l:#D1FAE5;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08);
+  --r:14px;--r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+
+/* Loader */
+#loader{position:fixed;inset:0;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.ld-logo{font-family:'DM Serif Display',serif;font-size:1.6rem;color:#fff;margin-bottom:1.5rem}
+.ld-sub{font-size:12px;color:rgba(255,255,255,.35);margin-top:1rem}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#5EEAD4;margin:0 4px;animation:blink .8s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* Header */
+header{background:#111827;color:#fff;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;display:flex;align-items:center;gap:8px}
+.h-dot{width:8px;height:8px;border-radius:50%;background:#5EEAD4}
+.h-right{display:flex;align-items:center;gap:10px}
+.h-badge{font-size:11px;color:rgba(255,255,255,.5);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:3px 10px}
+.h-update{font-size:10px;color:#5EEAD4;display:flex;align-items:center;gap:4px}
+.h-refresh{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);border-radius:20px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.h-refresh:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* Layout */
+main{max-width:1120px;margin:0 auto;padding:2rem 1rem 5rem}
+
+/* Alerts */
+.alert{border-radius:var(--r-sm);padding:.9rem 1.1rem;margin-bottom:.6rem;display:flex;gap:10px;border-left:4px solid;animation:up .4s ease}
+.alert-danger{background:var(--red-l);border-color:var(--red)}
+.alert-warning{background:var(--amber-l);border-color:var(--amber)}
+.alert-info{background:var(--teal-l);border-color:var(--teal)}
+.alert strong{display:block;font-size:13.5px;margin-bottom:1px}
+.alert-danger strong{color:var(--red)}.alert-warning strong{color:var(--amber)}.alert-info strong{color:var(--teal)}
+.alert p{font-size:13px;color:var(--ink-soft)}
+.alert-danger p{color:#991B1B}.alert-warning p{color:#92400E}.alert-info p{color:#134E4A}
+
+/* Section label */
+.slabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin:2rem 0 .8rem}
+
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1rem 1rem;box-shadow:var(--shadow);position:relative;overflow:hidden;animation:up .4s ease both}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.kpi.raul::before{background:var(--raul)}.kpi.nydia::before{background:var(--nydia)}
+.kpi.total::before{background:var(--teal)}.kpi.warn::before{background:var(--amber)}
+.kpi-label{font-size:11px;color:var(--ink-faint);font-weight:500;margin-bottom:4px}
+.kpi-val{font-family:'DM Serif Display',serif;font-size:1.85rem;letter-spacing:-0.03em;line-height:1;margin-bottom:4px}
+.kpi.raul .kpi-val{color:var(--raul)}.kpi.nydia .kpi-val{color:var(--nydia)}
+.kpi.total .kpi-val{color:var(--teal)}.kpi.warn .kpi-val{color:var(--amber)}
+.kpi-sub{font-size:11px;color:var(--ink-faint)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);animation:up .5s ease both}
+.card-title{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.three-col{display:grid;grid-template-columns:1.5fr 1fr;gap:1.25rem}
+@media(max-width:720px){.two-col,.three-col{grid-template-columns:1fr}}
+
+/* RS tabs */
+.rs-tabs{display:flex;gap:8px;margin-bottom:1.25rem}
+.rs-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--ink-faint);transition:all .15s}
+.rs-tab.active-raul{background:var(--raul-l);color:var(--raul);border-color:var(--raul)}
+.rs-tab.active-nydia{background:var(--nydia-l);color:var(--nydia);border-color:var(--nydia)}
+
+/* Cat rows */
+.cat-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-soft);gap:8px}
+.cat-row:last-child{border-bottom:none}
+.cat-emoji{width:22px;text-align:center;font-size:1rem;flex-shrink:0}
+.cat-name{flex:1;font-size:13px;font-weight:500}
+.cat-bar-wrap{width:80px;flex-shrink:0}
+.cat-bar-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.cat-bar-fill{height:5px;border-radius:3px;transition:width 1s ease}
+.cat-amount{font-size:13px;font-weight:600;min-width:80px;text-align:right;flex-shrink:0}
+
+/* Soft Restaurant */
+.sr-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.sr-stat{border-radius:var(--r-sm);padding:.85rem;text-align:center}
+.sr-stat .val{font-family:'DM Serif Display',serif;font-size:1.4rem;letter-spacing:-0.02em;line-height:1.1}
+.sr-stat .lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.sr-cobrado{background:var(--green-l)} .sr-cobrado .val{color:var(--green)} .sr-cobrado .lbl{color:var(--green)}
+.sr-pendiente{background:var(--amber-l)} .sr-pendiente .val{color:var(--amber)} .sr-pendiente .lbl{color:var(--amber)}
+.sr-margen{background:var(--teal-l)} .sr-margen .val{color:var(--teal)} .sr-margen .lbl{color:var(--teal)}
+
+.estado-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:var(--r-sm);margin-bottom:6px;font-size:13px}
+.estado-row .label{font-weight:600}
+.estado-row .amounts{display:flex;gap:16px;text-align:right;font-size:12px}
+.estado-row .amounts span{display:block}
+.estado-row .amounts .main{font-weight:700;font-size:13px}
+
+/* Costco */
+.costco-bar-section{margin-bottom:1.25rem}
+.costco-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-faint);margin-bottom:4px}
+.costco-bar-bg{height:12px;background:var(--border);border-radius:6px;overflow:hidden;display:flex}
+.costco-seg{height:12px;transition:width 1s ease}
+.costco-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.costco-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-soft)}
+.costco-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.alerta-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:var(--r-sm);background:var(--amber-l);border:1px solid #FDE68A;margin-bottom:6px;font-size:13px}
+.alerta-item .monto{font-weight:700;color:var(--amber)}
+
+/* Gasolina table */
+.gas-table{width:100%;border-collapse:collapse;font-size:13px}
+.gas-table th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);padding:0 8px 8px;border-bottom:1px solid var(--border)}
+.gas-table td{padding:8px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+.gas-table tr:last-child td{border-bottom:none}
+.gas-table tr:hover td{background:var(--bg)}
+.rs-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pill-raul{background:var(--raul-l);color:var(--raul)}
+.pill-nydia{background:var(--nydia-l);color:var(--nydia)}
+
+/* Nómina */
+.nomina-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft);font-size:13px}
+.nomina-row:last-child{border-bottom:none}
+
+/* Footer */
+footer{text-align:center;padding:2rem;font-size:12px;color:var(--ink-faint);border-top:1px solid var(--border);margin-top:3rem}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+canvas{max-height:240px}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-logo">⚙️ Microsoporte</div>
+  <div class="dots"><span></span><span></span><span></span></div>
+  <div class="ld-sub">Cargando dashboard financiero...</div>
+</div>
+
+<header>
+  <div class="h-logo"><span class="h-dot"></span>Microsoporte · Dashboard</div>
+  <div class="h-right">
+    <span class="h-update" id="updateBadge">⬤ Cargando...</span>
+    <span class="h-badge" id="periodoBadge">—</span>
+    <button class="h-refresh" onclick="location.reload()">↻</button>
+  </div>
+</header>
+
+<main id="app" style="display:none">
+
+  <div id="alertasBox"></div>
+
+  <p class="slabel" id="periodoLabel"></p>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- Egresos por categoría -->
+  <p class="slabel">Egresos por categoría — empresa</p>
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">📊 Desglose por categoría</div>
+      <div class="rs-tabs">
+        <button class="rs-tab active-raul" onclick="showRS('raul',this)">Raul Astudillo G.</button>
+        <button class="rs-tab" onclick="showRS('nydia',this)">Nydia Borquez B.</button>
+        <button class="rs-tab" onclick="showRS('total',this)">Total</button>
+      </div>
+      <div id="catList"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🍩 Distribución</div>
+      <canvas id="donutChart"></canvas>
+      <div id="donutLegend" style="margin-top:1rem;display:flex;flex-direction:column;gap:5px"></div>
+    </div>
+  </div>
+
+  <!-- Soft Restaurant -->
+  <p class="slabel">🔁 Soft Restaurant — Costo vs Cobro al cliente</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">💻 Estado del cruce</div>
+      <div class="sr-stat-grid" id="srStats"></div>
+      <div id="srEstados"></div>
+      <div style="margin-top:1rem;padding:.85rem;background:var(--teal-l);border-radius:var(--r-sm);font-size:13px;color:#134E4A">
+        <strong>Margen promedio: <span id="srMargenPct">—</span></strong><br>
+        Registrar el precio al cliente en el Excel para ver la utilidad real por operación.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 Costo vs Facturado</div>
+      <canvas id="srChart"></canvas>
+      <div style="margin-top:1rem;padding:.85rem;background:var(--amber-l);border-radius:var(--r-sm);font-size:13px;color:#92400E;border-left:3px solid var(--amber)">
+        <strong>⚠️ Pendiente cobrar:</strong> <span id="srPendienteMonto" style="font-size:1.1rem;font-weight:700"></span><br>
+        Emitir CFDIs de las operaciones marcadas como ⏳ Pendiente en el Excel.
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjeta Costco -->
+  <p class="slabel">💳 Tarjeta Costco — Empresa vs Personal</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">📊 Composición de cargos</div>
+      <div class="costco-bar-section">
+        <div class="costco-bar-label">
+          <span>Distribución de <span id="costcoTotal">—</span> en cargos</span>
+          <span id="costcoN">—</span>
+        </div>
+        <div class="costco-bar-bg" id="costcoBar"></div>
+        <div class="costco-legend" id="costcoLegend"></div>
+      </div>
+      <canvas id="costcoChart" style="max-height:180px"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Montos que requieren atención</div>
+      <div id="costcoAlertas"></div>
+      <div style="margin-top:1rem;padding:.9rem;background:var(--green-l);border-radius:var(--r-sm);font-size:13px;color:var(--green);border-left:3px solid var(--green)">
+        <strong>💡 Recomendación inmediata:</strong><br>
+        Al pagar en Costco, separar en <strong>DOS transacciones</strong>: primero artículos de empresa (pide factura), luego personales. Costco lo permite sin problema.
+      </div>
+    </div>
+  </div>
+
+  <!-- Gasolina -->
+  <p class="slabel">⛽ Historial de gasolina — ambas razones sociales</p>
+  <div class="card">
+    <div class="card-title">⛽ Llenados registrados · Abr–May 2026</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+      <div style="background:var(--raul-l);border-radius:var(--r-sm);padding:.85rem;text-align:center">
+        <div style="font-size:11px;font-weight:600;color:var(--raul);text-transform:uppercase;margin-bottom:3px">Raul Astudillo G.</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--raul)" id="gasRaul">—</div>
+      </div>
+      <div style="background:var(--nydia-l);border-radius:var(--r-sm);padding:.85rem;text-align:center">
+        <div style="font-size:11px;font-weight:600;color:var(--nydia);text-transform:uppercase;margin-bottom:3px">Nydia Borquez B.</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--nydia)" id="gasNydia">—</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="gas-table">
+        <thead><tr><th>Fecha</th><th>Razón Social</th><th>Estación</th><th style="text-align:right">Total ($)</th></tr></thead>
+        <tbody id="gasBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Nómina -->
+  <p class="slabel">👥 Nómina</p>
+  <div class="card" style="max-width:500px">
+    <div class="card-title">👥 Estructura de nómina actual</div>
+    <div id="nominaBox"></div>
+  </div>
+
+</main>
+
+<footer id="appFooter" style="display:none">
+  Microsoporte · Sistema Financiero · <span id="footerUpdate"></span><br>
+  <span style="color:var(--border)">──</span> Información confidencial · Solo para uso interno <span style="color:var(--border)">──</span>
+</footer>
+
+<script>
+const fmt  = n => '$' + (n||0).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmt2 = n => '$' + (n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const $ = id => document.getElementById(id);
+
+let globalData = null;
+let donutChart = null;
+
+async function load() {
+  try {
+    const res = await fetch('datos_microsoporte.json?v='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    globalData = await res.json();
+    render(globalData);
+  } catch(e) {
+    $('loader').innerHTML = `<div style="color:#fff;text-align:center;padding:2rem">
+      <div style="font-size:2rem;margin-bottom:1rem">⚠️</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.5rem">Error al cargar</div>
+      <div style="color:rgba(255,255,255,.4);font-size:13px;margin-bottom:1.5rem">${e.message}</div>
+      <button onclick="location.reload()" style="background:#5EEAD4;color:#111;border:none;border-radius:20px;padding:8px 20px;font-size:13px;cursor:pointer;font-weight:600">Reintentar</button>
+    </div>`;
+  }
+}
+
+function render(d) {
+  $('updateBadge').innerHTML = '⬤ '+d.meta.actualizado;
+  $('updateBadge').style.color = '#5EEAD4';
+  $('periodoBadge').textContent = d.meta.periodo;
+  $('periodoLabel').textContent = 'Resumen consolidado — '+d.meta.periodo;
+  $('footerUpdate').textContent = 'Actualizado: '+d.meta.actualizado+' · '+d.resumen.n_movimientos+' movimientos';
+
+  // Alertas
+  d.alertas.forEach(a => {
+    const cls = a.tipo==='danger'?'alert-danger':a.tipo==='warning'?'alert-warning':'alert-info';
+    $('alertasBox').innerHTML += `<div class="alert ${cls}"><div><strong>${a.titulo}</strong><p>${a.detalle}</p></div></div>`;
+  });
+
+  // KPIs
+  const kpis = [
+    {label:'Total empresa\nRaul A.G.',    val:fmt(d.resumen.total_raul_empresa),   sub:`${d.resumen.n_movimientos} movimientos`, cls:'raul'},
+    {label:'Total empresa\nNydia B.B.',   val:fmt(d.resumen.total_nydia_empresa),  sub:'Banamex + Scotiabank',                   cls:'nydia'},
+    {label:'Egresos personales\n(ambos)', val:fmt(d.resumen.total_personal_raul+d.resumen.total_personal_nydia), sub:'Excluidos del cálculo empresa', cls:'total'},
+    {label:'Soft Restaurant\npendiente cobrar', val:fmt(d.soft_restaurant.total_pendiente_cobro), sub:'CFDIs por emitir', cls:'warn'},
+  ];
+  $('kpiGrid').innerHTML = kpis.map((k,i)=>`
+    <div class="kpi ${k.cls}" style="animation-delay:${i*.06}s">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // Init cat list with Raul
+  renderCatList('raul');
+
+  // Donut (Raul default)
+  renderDonut(d.por_razon_social[0]);
+
+  // SR
+  renderSR(d);
+
+  // Costco
+  renderCostco(d);
+
+  // Gasolina
+  renderGas(d);
+
+  // Nómina
+  renderNomina(d);
+
+  $('app').style.display='block';
+  $('appFooter').style.display='block';
+  setTimeout(()=>$('loader').classList.add('hide'),600);
+}
+
+function showRS(which, btn) {
+  document.querySelectorAll('.rs-tab').forEach(b=>{b.className='rs-tab';});
+  if(which==='raul'){btn.className='rs-tab active-raul'; renderCatList('raul'); renderDonut(globalData.por_razon_social[0]);}
+  else if(which==='nydia'){btn.className='rs-tab active-nydia'; renderCatList('nydia'); renderDonut(globalData.por_razon_social[1]);}
+  else{btn.className='rs-tab active-raul'; renderCatList('total'); renderDonut(null);}
+}
+
+function renderCatList(which) {
+  const d = globalData;
+  let cats, color, maxMonto;
+  if(which==='raul'){cats=d.por_razon_social[0].categorias; color=d.por_razon_social[0].color;}
+  else if(which==='nydia'){cats=d.por_razon_social[1].categorias; color=d.por_razon_social[1].color;}
+  else{
+    cats=d.egresos_por_categoria.map(c=>({cat:c.cat,emoji:c.emoji,monto:c.total}));
+    color='#0F766E';
+  }
+  maxMonto=Math.max(...cats.map(c=>c.monto));
+  $('catList').innerHTML = cats.map(c=>`
+    <div class="cat-row">
+      <span class="cat-emoji">${c.emoji}</span>
+      <span class="cat-name">${c.cat}</span>
+      <div class="cat-bar-wrap"><div class="cat-bar-bg">
+        <div class="cat-bar-fill" style="width:${(c.monto/maxMonto*100).toFixed(0)}%;background:${color}"></div>
+      </div></div>
+      <span class="cat-amount">${fmt(c.monto)}</span>
+    </div>`).join('');
+}
+
+function renderDonut(rs) {
+  const ctx = $('donutChart').getContext('2d');
+  if(donutChart) donutChart.destroy();
+  const cats = rs ? rs.categorias : globalData.egresos_por_categoria.map(c=>({cat:c.cat,emoji:c.emoji,monto:c.total}));
+  const colors=['#166534','#92400E','#0F766E','#B45309','#1D4ED8','#7C3AED','#B91C1C','#374151','#065F46','#6B21A8','#C2410C'];
+  const total = cats.reduce((s,c)=>s+c.monto,0);
+  donutChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{labels:cats.map(c=>c.cat),datasets:[{data:cats.map(c=>c.monto),backgroundColor:colors,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+    options:{cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.parsed)+' ('+((ctx.parsed/total)*100).toFixed(1)+'%)'}}}}
+  });
+  const top3 = [...cats].sort((a,b)=>b.monto-a.monto).slice(0,3);
+  $('donutLegend').innerHTML = top3.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:7px;font-size:12px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};flex-shrink:0"></span>
+      <span style="flex:1;color:var(--ink-soft)">${c.emoji} ${c.cat}</span>
+      <strong>${((c.monto/total)*100).toFixed(1)}%</strong>
+    </div>`).join('');
+}
+
+function renderSR(d) {
+  const sr = d.soft_restaurant;
+  $('srStats').innerHTML = `
+    <div class="sr-stat sr-cobrado"><div class="val">${fmt(sr.total_cobrado)}</div><div class="lbl">Facturado</div></div>
+    <div class="sr-stat sr-pendiente"><div class="val">${sr.pendientes}</div><div class="lbl">Pendientes</div></div>
+    <div class="sr-stat sr-margen"><div class="val">${sr.margen_promedio_pct}%</div><div class="lbl">Margen prom.</div></div>`;
+  $('srMargenPct').textContent = sr.margen_promedio_pct + '%';
+  $('srPendienteMonto').textContent = fmt(sr.total_pendiente_cobro);
+
+  const bgMap={'✅ Cobrado':'var(--green-l)','⏳ Pendiente':'var(--amber-l)','❌ Sin cliente':'var(--red-l)'};
+  const tcMap={'✅ Cobrado':'var(--green)','⏳ Pendiente':'var(--amber)','❌ Sin cliente':'var(--red)'};
+  $('srEstados').innerHTML = sr.desglose.map(e=>`
+    <div class="estado-row" style="background:${bgMap[e.estado]||'#f3f4f6'}">
+      <span class="label" style="color:${tcMap[e.estado]||'#374151'}">${e.estado}</span>
+      <div class="amounts">
+        <div><span>Costo</span><span class="main" style="color:${tcMap[e.estado]||'#374151'}">${fmt(e.costo)}</span></div>
+        ${e.cobrado>0?`<div><span>Facturado</span><span class="main" style="color:var(--green)">${fmt(e.cobrado)}</span></div>`:''}
+        <div><span>Ops.</span><span class="main">${e.n}</span></div>
+      </div>
+    </div>`).join('');
+
+  const srCtx = $('srChart').getContext('2d');
+  new Chart(srCtx,{type:'bar',
+    data:{labels:['Raul A.G.','Nydia B.B.'],
+      datasets:[
+        {label:'Costo Soft Rest.',data:[58182.44,41185.33],backgroundColor:'rgba(185,28,28,.7)',borderRadius:4},
+        {label:'Facturado cliente',data:[118900,68585.33],backgroundColor:'rgba(22,101,52,.7)',borderRadius:4},
+      ]},
+    options:{plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}},
+      scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>'$'+v/1000+'k',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}}}}
+  });
+}
+
+function renderCostco(d) {
+  const cc = d.costco_tarjeta;
+  const total = cc.total_importe;
+  $('costcoTotal').textContent = fmt(total);
+  $('costcoN').textContent = cc.total_cargos+' cargos';
+
+  const segs = [
+    {label:'Empresa',  monto:cc.empresa_facturado.monto,  pct:cc.empresa_facturado.pct,  color:'#166534'},
+    {label:'Personal', monto:cc.personal.monto,            pct:cc.personal.pct,            color:'#1D4ED8'},
+    {label:'Por def.', monto:cc.por_definir.monto,         pct:cc.por_definir.pct,         color:'#D97706'},
+  ];
+  $('costcoBar').innerHTML = segs.map(s=>`<div class="costco-seg" style="width:${s.pct}%;background:${s.color}"></div>`).join('');
+  $('costcoLegend').innerHTML = segs.map(s=>`
+    <div class="costco-legend-item">
+      <div class="costco-legend-dot" style="background:${s.color}"></div>
+      <span>${s.label} ${fmt(s.monto)} (${s.pct.toFixed(1)}%)</span>
+    </div>`).join('');
+
+  const ccCtx = $('costcoChart').getContext('2d');
+  new Chart(ccCtx,{type:'doughnut',
+    data:{labels:segs.map(s=>s.label),datasets:[{data:segs.map(s=>s.monto),backgroundColor:segs.map(s=>s.color),borderWidth:2,borderColor:'#fff'}]},
+    options:{cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.parsed)+' ('+ctx.parsed/total*100|0+'%)'}}}}
+  });
+
+  $('costcoAlertas').innerHTML = cc.alerta_monto.map(a=>`
+    <div class="alerta-item">
+      <span>${a.desc}</span>
+      <div style="text-align:right">
+        <div class="monto">${fmt(a.monto)}</div>
+        <div style="font-size:11px;color:#92400E">${a.estado}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGas(d) {
+  const gas = d.gasolina_historial;
+  const raul = gas.filter(g=>g.rs==='Raul').reduce((s,g)=>s+g.total,0);
+  const nydia= gas.filter(g=>g.rs==='Nydia').reduce((s,g)=>s+g.total,0);
+  $('gasRaul').textContent = fmt(raul);
+  $('gasNydia').textContent = fmt(nydia);
+  $('gasBody').innerHTML = [...gas].reverse().map(g=>`
+    <tr>
+      <td>${g.fecha}</td>
+      <td><span class="rs-pill ${g.rs==='Raul'?'pill-raul':'pill-nydia'}">${g.rs}</span></td>
+      <td>${g.estacion}</td>
+      <td style="text-align:right;font-weight:600">${fmt2(g.total)}</td>
+    </tr>`).join('');
+}
+
+function renderNomina(d) {
+  const n = d.nomina;
+  $('nominaBox').innerHTML = `
+    ${n.empleados.map(e=>`
+      <div class="nomina-row">
+        <span style="font-weight:500">${e}</span>
+        <span style="font-weight:700;color:var(--green)">${fmt2(e.includes('Raul')?n.pago_quincenal_raul:n.pago_quincenal_ana)}/quincena</span>
+      </div>`).join('')}
+    <div class="nomina-row" style="border-bottom:none">
+      <span style="font-weight:700">Total nómina Abril</span>
+      <span style="font-weight:700;color:var(--red)">${fmt(n.total_abril)}</span>
+    </div>`;
+}
+
+load();
+</script>
+</body>
+</html>

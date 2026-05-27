@@ -1,0 +1,445 @@
+{
+  "meta": {
+    "empresa": "Microsoporte",
+    "actualizado": "25/05/2026",
+    "periodo": "Abril – Mayo 2026",
+    "razones_sociales": [
+      "Raul Astudillo G.",
+      "Nydia Borquez B."
+    ],
+    "version": "1.0"
+  },
+  "resumen": {
+    "total_egresos_empresa": 340936.04,
+    "total_raul_empresa": 272041.73,
+    "total_nydia_empresa": 68894.31,
+    "total_personal_raul": 39381.91,
+    "total_personal_nydia": 11459.7,
+    "n_movimientos": 235,
+    "meses_cubiertos": 2
+  },
+  "por_razon_social": [
+    {
+      "nombre": "Raul Astudillo G.",
+      "color": "#166534",
+      "color_light": "#D1FAE5",
+      "total_empresa": 272041.73,
+      "facturado": 65361.39,
+      "no_facturado": 1387.66,
+      "personal": 22744.09,
+      "categorias": [
+        {
+          "cat": "Soft Restaurant",
+          "emoji": "💻",
+          "monto": 58182.44
+        },
+        {
+          "cat": "Pago Tarjeta Costco",
+          "emoji": "💳",
+          "monto": 174985.11
+        },
+        {
+          "cat": "Gasolina",
+          "emoji": "⛽",
+          "monto": 6283.7
+        },
+        {
+          "cat": "Materiales/Ferretería",
+          "emoji": "🔧",
+          "monto": 12466.07
+        },
+        {
+          "cat": "Nómina",
+          "emoji": "👥",
+          "monto": 21075.0
+        },
+        {
+          "cat": "Impuestos/Fiscal",
+          "emoji": "🏛️",
+          "monto": 19555.22
+        },
+        {
+          "cat": "Seguros",
+          "emoji": "🛡️",
+          "monto": 4477.25
+        },
+        {
+          "cat": "Otros",
+          "emoji": "📦",
+          "monto": 16017.0
+        }
+      ]
+    },
+    {
+      "nombre": "Nydia Borquez B.",
+      "color": "#92400E",
+      "color_light": "#FEF3C7",
+      "total_empresa": 68894.31,
+      "facturado": 41185.33,
+      "no_facturado": 6213.8,
+      "personal": 11459.7,
+      "categorias": [
+        {
+          "cat": "Soft Restaurant",
+          "emoji": "💻",
+          "monto": 41185.33
+        },
+        {
+          "cat": "Gasolina",
+          "emoji": "⛽",
+          "monto": 5659.28
+        },
+        {
+          "cat": "Viáticos/Peajes",
+          "emoji": "🛣️",
+          "monto": 2042.0
+        },
+        {
+          "cat": "Materiales/Ferretería",
+          "emoji": "🔧",
+          "monto": 3731.01
+        },
+        {
+          "cat": "Servicios",
+          "emoji": "📡",
+          "monto": 1344.79
+        },
+        {
+          "cat": "Costco Oficina",
+          "emoji": "🏢",
+          "monto": 6518.15
+        },
+        {
+          "cat": "Otros",
+          "emoji": "📦",
+          "monto": 8413.75
+        }
+      ]
+    }
+  ],
+  "soft_restaurant": {
+    "total_costo": 143879.44,
+    "total_cobrado": 161000.0,
+    "total_pendiente_cobro": 48350.0,
+    "margen_promedio_pct": 28.5,
+    "n_operaciones": 44,
+    "cobradas": 22,
+    "pendientes": 20,
+    "sin_cliente": 2,
+    "desglose": [
+      {
+        "estado": "✅ Cobrado",
+        "costo": 87294.56,
+        "cobrado": 118900.0,
+        "margen": 31605.44,
+        "pct": 26.6,
+        "n": 22
+      },
+      {
+        "estado": "⏳ Pendiente",
+        "costo": 54388.88,
+        "cobrado": 0,
+        "margen": 0,
+        "pct": 0,
+        "n": 20
+      },
+      {
+        "estado": "❌ Sin cliente",
+        "costo": 2196.0,
+        "cobrado": 0,
+        "margen": 0,
+        "pct": 0,
+        "n": 2
+      }
+    ],
+    "top_clientes": [
+      {
+        "cliente": "Raul Astudillo G.",
+        "instalaciones": 15,
+        "renovaciones": 20,
+        "facturado": 58182.44
+      },
+      {
+        "cliente": "Nydia Borquez B.",
+        "instalaciones": 7,
+        "renovaciones": 2,
+        "facturado": 41185.33
+      }
+    ]
+  },
+  "costco_tarjeta": {
+    "total_cargos": 31,
+    "total_importe": 55861.41,
+    "empresa_facturado": {
+      "monto": 28439.54,
+      "n": 13,
+      "pct": 50.9
+    },
+    "personal": {
+      "monto": 20023.25,
+      "n": 14,
+      "pct": 35.8
+    },
+    "por_definir": {
+      "monto": 7398.66,
+      "n": 4,
+      "pct": 13.2
+    },
+    "alerta_monto": [
+      {
+        "desc": "Refrigerador Costco Oficina",
+        "monto": 16999.0,
+        "estado": "Requiere factura empresa"
+      },
+      {
+        "desc": "COSTCO Raul Mayo $4,198",
+        "monto": 4198.0,
+        "estado": "Por definir — verificar"
+      },
+      {
+        "desc": "COSTCO Nydia Mayo $4,726",
+        "monto": 4726.5,
+        "estado": "Por definir — verificar"
+      }
+    ]
+  },
+  "alertas": [
+    {
+      "tipo": "danger",
+      "titulo": "💳 $7,398 en cargos Costco sin clasificar",
+      "detalle": "4 cargos marcados como 'Por definir' necesitan revisión urgente antes de la declaración. El Refrigerador de $16,999 requiere factura a nombre de la razón social correcta."
+    },
+    {
+      "tipo": "warning",
+      "titulo": "⏳ $54,388 de Soft Restaurant pendientes de cobrar",
+      "detalle": "20 instalaciones/licencias ya pagadas a Soft Restaurant que aún no tienen factura al cliente registrada. Revisar y emitir CFDI pendientes."
+    },
+    {
+      "tipo": "warning",
+      "titulo": "📋 Ingresos sin capturar desde Softfacturas",
+      "detalle": "El dashboard no puede calcular la utilidad real hasta que se registren los ingresos. Capturar facturas emitidas en hoja 💰 Ingresos del Excel."
+    },
+    {
+      "tipo": "info",
+      "titulo": "✅ Sistema migrado correctamente",
+      "detalle": "235 movimientos de Abril y Mayo 2026 migrados desde los archivos Excel anteriores. Base histórica lista para análisis."
+    }
+  ],
+  "egresos_por_categoria": [
+    {
+      "cat": "Soft Restaurant",
+      "emoji": "💻",
+      "raul": 58182.44,
+      "nydia": 41185.33,
+      "total": 99367.77
+    },
+    {
+      "cat": "Pago Tarjeta Costco",
+      "emoji": "💳",
+      "raul": 174985.11,
+      "nydia": 0,
+      "total": 174985.11
+    },
+    {
+      "cat": "Gasolina",
+      "emoji": "⛽",
+      "raul": 6283.7,
+      "nydia": 5659.28,
+      "total": 11942.98
+    },
+    {
+      "cat": "Nómina",
+      "emoji": "👥",
+      "raul": 21075.0,
+      "nydia": 0,
+      "total": 21075.0
+    },
+    {
+      "cat": "Materiales/Ferretería",
+      "emoji": "🔧",
+      "raul": 12466.07,
+      "nydia": 3731.01,
+      "total": 16197.08
+    },
+    {
+      "cat": "Impuestos/Fiscal",
+      "emoji": "🏛️",
+      "raul": 19555.22,
+      "nydia": 0,
+      "total": 19555.22
+    },
+    {
+      "cat": "Viáticos/Peajes",
+      "emoji": "🛣️",
+      "raul": 0,
+      "nydia": 2042.0,
+      "total": 2042.0
+    },
+    {
+      "cat": "Servicios",
+      "emoji": "📡",
+      "raul": 0,
+      "nydia": 1344.79,
+      "total": 1344.79
+    },
+    {
+      "cat": "Seguros",
+      "emoji": "🛡️",
+      "raul": 4477.25,
+      "nydia": 0,
+      "total": 4477.25
+    },
+    {
+      "cat": "Costco Oficina",
+      "emoji": "🏢",
+      "raul": 2440.15,
+      "nydia": 6518.15,
+      "total": 8958.3
+    },
+    {
+      "cat": "Otros",
+      "emoji": "📦",
+      "raul": 16017.0,
+      "nydia": 8413.75,
+      "total": 24430.75
+    }
+  ],
+  "gasolina_historial": [
+    {
+      "fecha": "01/04/2026",
+      "rs": "Nydia",
+      "estacion": "Costco Gas",
+      "total": 479.8
+    },
+    {
+      "fecha": "04/04/2026",
+      "rs": "Nydia",
+      "estacion": "Costco Gas",
+      "total": 381.79
+    },
+    {
+      "fecha": "10/04/2026",
+      "rs": "Nydia",
+      "estacion": "Costco Gas",
+      "total": 472.41
+    },
+    {
+      "fecha": "13/04/2026",
+      "rs": "Nydia",
+      "estacion": "Costco Gas",
+      "total": 461.09
+    },
+    {
+      "fecha": "16/04/2026",
+      "rs": "Raul",
+      "estacion": "Costco Gas",
+      "total": 716.73
+    },
+    {
+      "fecha": "21/04/2026",
+      "rs": "Raul",
+      "estacion": "Costco Gas",
+      "total": 356.42
+    },
+    {
+      "fecha": "25/04/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera",
+      "total": 984.89
+    },
+    {
+      "fecha": "02/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera",
+      "total": 965.57
+    },
+    {
+      "fecha": "04/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera Corolla",
+      "total": 1062.91
+    },
+    {
+      "fecha": "05/05/2026",
+      "rs": "Nydia",
+      "estacion": "Gasolina March 2",
+      "total": 547.48
+    },
+    {
+      "fecha": "13/05/2026",
+      "rs": "Raul",
+      "estacion": "Costco Gas Bombi",
+      "total": 633.8
+    },
+    {
+      "fecha": "16/05/2026",
+      "rs": "Nydia",
+      "estacion": "Gasolina March 1",
+      "total": 936.62
+    },
+    {
+      "fecha": "18/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera",
+      "total": 325.03
+    },
+    {
+      "fecha": "19/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolina LAP",
+      "total": 733.99
+    },
+    {
+      "fecha": "20/05/2026",
+      "rs": "Nydia",
+      "estacion": "Gasolina Corolla",
+      "total": 980.82
+    },
+    {
+      "fecha": "23/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolina Corolla",
+      "total": 381.99
+    },
+    {
+      "fecha": "24/05/2026",
+      "rs": "Nydia",
+      "estacion": "Gasolina March 1",
+      "total": 927.74
+    },
+    {
+      "fecha": "25/05/2026",
+      "rs": "Raul",
+      "estacion": "Mobil Aguajitos",
+      "total": 970.02
+    },
+    {
+      "fecha": "28/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera",
+      "total": 626.09
+    },
+    {
+      "fecha": "28/05/2026",
+      "rs": "Nydia",
+      "estacion": "Gasolinera",
+      "total": 350.33
+    },
+    {
+      "fecha": "29/05/2026",
+      "rs": "Raul",
+      "estacion": "Gasolinera",
+      "total": 857.31
+    }
+  ],
+  "nomina": {
+    "empleados": [
+      "Raul Astudillo",
+      "Ana"
+    ],
+    "pago_quincenal_raul": 5268.3,
+    "pago_quincenal_ana": 5269.2,
+    "total_abril": 21075.0,
+    "total_mayo_parcial": 10537.6
+  }
+}
